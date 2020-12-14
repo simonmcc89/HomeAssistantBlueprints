@@ -1,0 +1,144 @@
+blueprint:
+  name: Smartthing Button Event IKEA button remote 1, 2, or 5
+  description: |
+    Use IKEA Remote To Trigger Actions
+
+  domain: automation
+  input:
+    button_number:
+      name: 'Switch Number (Required)'
+      description: 'Number'
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 60
+          mode: slider
+          step: 1
+    button_on_off:
+      name: On off button press
+      description: Action to run on press of on off button
+      default: []
+      selector:
+        action:
+    button_up_short:
+      name: Up button - short press
+      description: Action to run on short brightness up press
+      default: []
+      selector:
+        action:
+    button_up_long:
+      name: Up button - long press
+      description: Action to run on long brightness up press
+      default: []
+      selector:
+        action:
+    button_down_short:
+      name: Down button - short press
+      description: Action to run on short brightness down press
+      default: []
+      selector:
+        action:
+    button_down_long:
+      name: Down button - long press
+      description: Action to run on long brightness down press
+      default: []
+      selector:
+        action:
+    button_left_short:
+      name: Left button - short press
+      description: Action to run on short left button press
+      default: []
+      selector:
+        action:
+    button_left_long:
+      name: Left button - long press
+      description: Action to run on long left button press
+      default: []
+      selector:
+        action:
+    button_right_short:
+      name: Right button - short press
+      description: Action to run on short right button press
+      default: []
+      selector:
+        action:
+    button_right_long:
+      name: Right button - long press
+      description: Action to run on long right button press
+      default: []
+      selector:
+        action:
+
+mode: restart
+max_exceeded: silent
+
+trigger:
+  - platform: event
+    event_type: smartthings.button
+    #event_data:
+      #device_id: !input remote
+
+action:
+
+  - variables:
+      compare_input: !input 'button_number'
+      compare_name: "Switch {{compare_input}}"
+      switch_name: "{{ trigger.event.data.name }}"
+      button_id: "{{ trigger.event.data.component_id }}"
+      action_type: "{{ trigger.event.data.value }}"
+
+  - choose:
+      - conditions:
+          - "{{ action_type == 'pushed' }}"
+          - "{{ switch_name == compare_name}}"
+          - "{{ button_id == 'button5' }}"
+        sequence: !input button_on_off
+
+      - conditions:
+          - "{{ action_type == 'pushed' }}"
+          - "{{ switch_name == compare_name}}"
+          - "{{ button_id == 'button1' }}"
+        sequence: !input button_up_short
+
+      - conditions:
+          - "{{ action_type == 'held' }}"
+          - "{{ switch_name == compare_name}}"
+          - "{{ button_id == 'button1' }}"
+        sequence: !input button_up_long
+
+      - conditions:
+          - "{{ action_type == 'pushed' }}"
+          - "{{ switch_name == compare_name}}"
+          - "{{ button_id == 'button2' }}"
+        sequence: !input button_down_short
+
+      - conditions:
+          - "{{ action_type == 'held' }}"
+          - "{{ switch_name == compare_name}}"
+          - "{{ button_id == 'button2' }}"
+        sequence: !input button_down_long
+
+      - conditions:
+          - "{{ action_type == 'pushed' }}"
+          - "{{ switch_name == compare_name}}"
+          - "{{ button_id == 'button3' }}"
+        sequence: !input button_left_short
+
+      - conditions:
+          - "{{ action_type == 'held' }}"
+          - "{{ switch_name == compare_name}}"
+          - "{{ button_id == 'button3' }}"
+        sequence: !input button_left_long
+
+      - conditions:
+          - "{{ action_type == 'pushed' }}"
+          - "{{ switch_name == compare_name}}"
+          - "{{ button_id == 'button4' }}"
+        sequence: !input button_right_short
+
+      - conditions:
+          - "{{ action_type == 'held' }}"
+          - "{{ switch_name == compare_name}}"
+          - "{{ button_id == 'button4' }}"
+        sequence: !input button_right_long
